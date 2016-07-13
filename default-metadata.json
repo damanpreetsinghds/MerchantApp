@@ -19,8 +19,7 @@
     "RestAPIKey": "uw4dR69egicqYnwFgNY1b90PZVWtsn5K91FteUSR",
     "ClientKey": "mCiSHfaUFggnIWYO6KpRJhblenWRYGsHO87Yk7A3"
   },
-  "apps": 
-  [
+  "apps": [
     {
       "id": 20836,
       "name": "MerchantApp",
@@ -34,8 +33,7 @@
       "showInHome": true,
       "networkrequired": true,
       "analytics": false,
-      "pages": 
-      [
+      "pages": [
         {
           "pageid": "MerchantApp",
           "pageTemplate": "<div><\/div>",
@@ -59,7 +57,6 @@
       ]
     }
   ],
-  "pages": 
-  [
+  "pages": [
   ]
 }
