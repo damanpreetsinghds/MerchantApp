@@ -35,6 +35,8 @@ to see this page in browser
   <link rel="stylesheet" href="assets/css/eventCalendar.css">
   <link rel="stylesheet" href="assets/css/eventCalendar_theme_responsive.css">
   <link rel="stylesheet" href="assets/css/promptumenu.css">
+  <link rel="stylesheet" href="assets/css/customCSS.css">
+  <link rel="stylesheet" href="assets/css/animate.css">
 
 
   <script src="assets/js/angular.js"></script>
@@ -59,63 +61,92 @@ to see this page in browser
     <script src="assets/js/jquery.eventCalendar.js"></script>
     <script src="assets/js/blockui.min.js"></script>
     <script src="assets/js/jquery.promptu-menu.js"></script>
-
+    <script src="assets/js/jquery.newsticker.js"></script>
     <script type="text/javascript" src="assets/js/apprise.min.js"></script>
+    <!--<script type="text/javascript" src="assets/js/facebookSDK.js"></script>-->
+    <script type="text/javascript" src="assets/js/openFB.js"></script>
+    <style>
+        .sidebar-left-in .app,.sidebar-left-in .navbar,.sidebar-left-in .app-body{
+            box-shadow:inset 1px 0px 12px rgba(100, 100, 100, 0.4) !important;
+        }
+        .app-body{
+            padding-bottom:0px !important;
+        }
+    .newsticker {
+        background: #C0392B;
+        border-radius: 5px;
+        color: #fff;
+        cursor: default;
+        font-family: verdana;
+        font-weight: bold;
+        font-size: 13px;
+        line-height: 15.6px;
+        padding: 0 10px 0 10px;
+        height: 30px;
+        position: relative;
+        overflow: hidden;
+        max-width:400px;
+        margin:30px auto;
+    }
+    
+    .newsticker .newsticker-list {
+        position: absolute;
+        top: 7.2px;
+    }
+    
+    .newsticker .newsticker-list .newsticker-item {
+        height: 100px;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+        </style>
 </head>
 
 <!--<body ng-app="myApp" ng-controller="MainController">-->
 <body>
   <style id="customstyle">{{customStyle}}</style>
-  <div ng-include="'sidebar.html'" class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar"></div>
+  <div ng-include="'sidebar.html'" class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar" ng-swipe-left="myswipeleft();" ng-swipe-right="myswiperight();"></div>
 
-  <div class="app"  style='background:url("{{backgroundUrl}}");background-size:100% 100%;'>
+  <div class="app"  style='background:url("{{backgroundUrl}}");background-size:100% 100%;box-shadow:none;'>
     <!-- Navbar -->
-    <div class="navbar navbar-app navbar-absolute-top">
+    <div class="navbar navbar-app navbar-absolute-top" style="border-radius:0px;">
 
-        <div class="navbar-brand navbar-brand-center" yield-to="title">
+        <div class="navbar-brand navbar-brand-center" yield-to="title" style="margin-top:2px;">
           <span ng-bind="appDisplayName"></span>
         </div>
 
-        <div class="btn-group pull-left">
-          <div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
-            <i class="fa fa-bars fa-2x"></i>
+        <div class="btn-group pull-left sideBarMenu" title="Sidebar Menu" aria-label="Sidebar Menu" name="Sidebar Menu" data-name="Sidebar Menu">
+          <div aria-label="Sidebar Menu" ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle" style='margin-left:5px;'>
+              <img  style='width:20px;height:20px;' src="images/hamburger-menu.png"  alt="">
+                  <span class="badge" style="margin-top: 10px;margin-left: -12px;position:absolute;font-weight:normal;background:#e30000 none repeat scroll 0% 0%;font-size:10px;" class='notificationCount' ng-bind="notificationCounts" ng-show='ShowPushCounts'>5</span>
+            <!--<i class="fa fa-bars fa-2x"></i>-->
           </div>
         </div>
 
-        <div class="btn-group pull-right" yield-to="navbarAction">
-            <div ng-show="showlogin" ng-click='loginlogout();' class="btn btn-navbar">
+        <div class="btn-group pull-right backButtonArrow" yield-to="navbarAction" style="position:absolute;margin-top: .6px;right:3px;">
+            <div ng-show="showlogin" title="Login" aria-label="Login" name="Login" data-name="Login" ng-click='loginlogout();' class="btn btn-navbar">
                 <i ng-class="loginclass"></i> <span ng-bind="logintext" class="hide"></span>
             </div>
-            <div ng-hide="showlogin" ng-click='back();' class="btn btn-navbar">
-                <i class="fa fa-chevron-circle-left fa-2x"></i>
+            <div ng-hide="showlogin" title="Back" aria-label="Back" name="Back" data-name="Back" ng-click='back();' class="btn btn-navbar">
+                <img  style='width:18px;' src="images/back-icon.png"  alt="">
+                <!--<i class="fa fa-arrow-left fa-2x"></i>-->
             </div>
-<!--
-            <button ng-show="showlogin" type="button" class="btn btn-primary navbar-btn" href="#login" ng-click='loginlogout();'>
-                <span ng-class="loginclass"></span>
-                <span ng-bind="logintext" ng-click='loginlogout();'></span>
-            </button>
-            <button ng-hide="showlogin" type="button" class="btn btn-primary navbar-btn" href="#login" ng-click='back();'>
-                <span class="glyphicon glyphicon-chevron-left"></span>
-                Back</button>
--->
-
-          <!--<div ng-click='loginlogout();' class="btn btn-navbar">
-            <i class="fa fa-user"></i> Login
-          </div>-->
+            
         </div>
     </div>
       <img id="branding" src="{{brandingUrl}}" />
       <div id="dock"></div>
-    <div class="navbar navbar-app navbar-absolute-bottom" style="min-height:15px;">
-        <div class="navbar-inverse" style="text-align:center;font-size:10px;">Powered by KRYPTOS
-        </div>
+    
       <!--<div class="btn-group justified">
         <a href="http://mobileangularui.com/" class="btn btn-navbar"><i class="fa fa-home fa-navbar"></i> Docs</a>
         <a href="https://github.com/mcasimir/mobile-angular-ui" class="btn btn-navbar"><i class="fa fa-github fa-navbar"></i> Sources</a>
         <a href="https://github.com/mcasimir/mobile-angular-ui/issues" class="btn btn-navbar"><i class="fa fa-exclamation-circle fa-navbar"></i> Issues</a>
 
       </div>-->
-    </div>
+      <!--<div class="navbar navbar-app navbar-absolute-bottom" style="min-height:15px;">
+          <div class="navbar-inverse" style="text-align:center;font-size:10px;">Powered by KRYPTOS
+          </div>
+      </div>-->
 
     <!--<div class="app-body" ng-class="{loading: loading}">
         <div ng-show="loading" class="app-content-loading">
@@ -124,7 +155,7 @@ to see this page in browser
         <ng-view class="app-content" ng-hide="loading"></ng-view>
       </div>
     </div>-->
-  <div class="app-body" ng-class="{loading: loading}">
+  <div class="app-body" ng-class="{loading: loading}" >
       <div ng-show="loading" class="app-content-loading">
           <i class="fa fa-spinner fa-spin loading-spinner"></i>
       </div>
