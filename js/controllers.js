@@ -10,16 +10,44 @@ angular.module('myApp.controllers', []).
 
     }])
     .controller('AboutCtrl', ['$rootScope', function ($rootScope) {
-        $rootScope.showlogin = false;
+    $rootScope.openPage=function(){
+    var url="http://www.kryptosmobile.com";
+
+    if(window.device) {
+      //$.blockUI();
+                              $.blockUI({
+                                        message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                        });
+    }
+
+    var iabRef = window.open(url, "_blank", "location=yes,hidden=no;enableViewportScale=yes");
+    var hideBlockUi = function() {
+        iabRef.show();
+        $.unblockUI();
+    };
+
+    var iabClose = function(data) {
+        window.location.href = "index.html#about";
+    $.unblockUI();
+    };
+    iabRef.addEventListener("exit", iabClose);
+  
+    var loadStop = function(data) {
+        hideBlockUi();
+
+    };
+    iabRef.addEventListener("loadstop", loadStop);
+    }
+    $rootScope.showlogin = false;
     }])
 .controller('ReportIssueCtrl', ['$scope', '$rootScope', '$http', '$location',
                                 function ($scope, $rootScope, $http, $location) {
                                 if (window.device) {
                                 var userID="";
                                 if($.jStorage.get('username')==null || $.jStorage.get('username') =="")
-                                {  userID= "";}
+                                {  userID= "Not available";}
                                 else{
-                                userID = 'User ID : ' +$.jStorage.get('username');
+                                userID = $.jStorage.get('username');
                                 }
                                 window.plugin.email.isServiceAvailable(
                                                                        function (isAvailable) {
@@ -34,7 +62,7 @@ angular.module('myApp.controllers', []).
                                                                                                                 'Device version : ' + window.device.version + '<br/>' +
                                                                                                                 'Device model : ' + window.device.model + '<br/>' +
                                                                                                                 'Build Version : ' + $rootScope.metadata.version + '<br/>' +
-                                                                                                                userID + '<br/>' +
+                                                                                                                'User ID : ' + userID + '<br/>' +
                                                                                                                 '</p>',
                                                                                                                 isHtml: true
                                                                                                                 });}
@@ -54,9 +82,9 @@ angular.module('myApp.controllers', []).
                                  if (window.device) {
                                  var userID="";
                                  if($.jStorage.get('username')==null || $.jStorage.get('username') =="")
-                                 {  userID= "";}
+                                 {  userID= "Not available";}
                                  else{
-                                 userID = 'User ID : ' +$.jStorage.get('username');
+                                 userID = $.jStorage.get('username');
                                  }
                                  window.plugin.email.isServiceAvailable(
                                                                         function (isAvailable) {
@@ -70,7 +98,7 @@ angular.module('myApp.controllers', []).
                                                                                                                  'Device version : ' + window.device.version + '<br/>' +
                                                                                                                  'Device model : ' + window.device.model + '<br/>' +
                                                                                                                  'Build Version : ' + $rootScope.metadata.version + '<br/>' +
-                                                                                                                 userID + '<br/>' +
+                                                                                                                 'User ID : ' + userID + '<br/>' +
                                                                                                                  '</p>',
                                                                                                                  isHtml: true
                                                                                                                  });}
@@ -91,7 +119,7 @@ angular.module('myApp.controllers', []).
             $scope.deviceuuid = window.device.uuid;
             $scope.deviceplatform = window.device.platform;
             $scope.deviceversion = window.device.version;
-            $scope.devicemodel = window.device.model;
+            $scope.devicemodel = window.device.model.replace(/,/g,'.');
         }else {
             $scope.devicename = "Kryptos Emulator";
             $scope.deviceuuid = "N/A";
@@ -104,14 +132,15 @@ angular.module('myApp.controllers', []).
     }])
     .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$location',
         function ($scope, $rootScope, $http, $location) {
-                              MyCampusApp.homeScreenDisplayed=false;
             $rootScope.back = function () {
                 $location.path("/home");
             };
             $scope.forgotpassword = function() {
                 var url = $rootScope.metadata.forgotPasswordUrl;
                 if (window.device) {
-                    $.blockUI();
+                              $.blockUI({
+                                        message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                        });
                 }
                 var iabRef = window.open(url, "_blank", "location=yes,EnableViewPortScale=yes");
                 var hideBlockUi = function() {
@@ -120,7 +149,6 @@ angular.module('myApp.controllers', []).
                 };
                 var iabClose = function(data) {
                     window.location.href = "index.html#login";
-                              $.unblockUI();
                 };
                 iabRef.addEventListener("exit", iabClose);
                 var loadStop = function(data) {
@@ -223,31 +251,25 @@ angular.module('myApp.controllers', []).
                 $('#listbtn').attr('class', 'btn btn-befault');
             }
 
-                                 $scope.resetApp = function(btn) {
-                                 if (btn == 1) {
-                                 var tenant = MyCampusApp.config.tenant;
-                                 $.jStorage.deleteKey(tenant + '-metadata');
-                                 $location.path("/home");
-                                 $scope.$apply();
-                                 }
-                                 }
-                                 $scope.resetmyapp = function() {
-                                 navigator.notification.confirm("Resetting your app clears all information associated with your app and initializes it with the default setting.  You can use this feature if your app is not functioning correctly. This feature requires network connectivity.", $scope.resetApp, 'Reset App', ['Yes', 'No']);
-                                 }
+            $scope.resetmyapp = function () {
+                var tenant = MyCampusApp.config.tenant;
+                $.jStorage.deleteKey(tenant + '-metadata');
+                $location.path("/home");
+            }
         }])
     .controller('HomeCtrl', ['$rootScope', '$scope', '$http', '$location', '$window', '$sce', '$route', '$compile',
         function ($rootScope, $scope, $http, $location, $window, $sce, $route, $compile) {
             //alert("Home controller called..");
             //alert ("Home Controller called");
             //setTimeout(function () {
-
-
+                            // alert("aa");
             if(!$rootScope.homeDownloadCompleteAdded) {
                 $rootScope.$on("onDownloadComplete", function(event, data) {
                     $.unblockUI();
                     $route.reload();
                     $rootScope.$apply(function () {
-                        $location.path("/home");
+                        //$location.path("/home");
+                        //$location.path("/app/FoodDeals/FoodDeals");
                     });
                 });
                 $rootScope.homeDownloadCompleteAdded = true;
@@ -262,10 +284,10 @@ angular.module('myApp.controllers', []).
                     }
                 }
                 if ($rootScope.loggedin) {
-                    $rootScope.loginclass = "fa fa-power-off fa-2x";
+                    $rootScope.loginclass = "fa fa-lock fa-2x";
                     $rootScope.logintext = "Logout";
                 } else {
-                    $rootScope.loginclass = "fa fa-user fa-2x";
+                    $rootScope.loginclass = "fa fa-unlock fa-2x";
                     $rootScope.logintext = "Login";
                 }
 
@@ -339,7 +361,7 @@ angular.module('myApp.controllers', []).
 
                     for (_i = 0, _len = allIcons.length; _i < _len; _i++) {
                         icon = allIcons[_i];
-                        var markup = '<li class="dashboardIcon"><a href="' + icon.url + '"><img src="' + icon.logourl + '" class="icon"></img></a>' +
+                        var markup = '<li class="dashboardIcon"><a aria-label="'+icon.title+'" href="' + icon.url + '"><img src="' + icon.logourl + '" class="icon"></img></a>' +
                             '<div class="campuseai-Info text-center" style="width:' + calculated + 'px;overflow:hidden;text-overflow: ellipsis;">'
                             + icon.title + '</div></li>';
                         homedata.append(markup);
@@ -457,6 +479,17 @@ angular.module('myApp.controllers', []).
     .controller('AppCtrl', ['$scope', '$routeParams', '$compile', '$http', '$rootScope', '$sce', '$window',
         '$location',
         function ($scope, $routeParams, $compile, $http, $rootScope, $sce, $window, $location) {
+            $rootScope.myswiperight = function() {    
+                if (!$("body").hasClass("sidebar-left-in")) {
+                    $rootScope.toggle("mainSidebar");
+                }
+
+            }
+            $rootScope.myswipeleft = function() {
+                if ($("body").hasClass("sidebar-left-in")) {
+                    $rootScope.toggle("mainSidebar");
+                }
+            }  
             MyCampusApp.homeScreenDisplayed = false;
             $scope.appname = $routeParams.appid;
             $scope.pageid = $routeParams.pageid;
@@ -535,7 +568,7 @@ angular.module('myApp.controllers', []).
             } catch (e) {
 
                 $.unblockUI();
-                apprise("Unknown error occurred while processing the request.", {'verify': false, 'textYes': "Ok"}, function (r) {
+                apprise("Unknown error occurred while processing the request.!", {'verify': false, 'textYes': "Ok"}, function (r) {
                     $rootScope.back();
                 });
             }
@@ -561,7 +594,9 @@ angular.module('myApp.controllers', []).
 
         $rootScope.$on("$routeChangeStart", function () {
             $rootScope.loading = true;
-            $.blockUI();
+                       $.blockUI({
+                                 message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                 });
         });
 
         $rootScope.$on("$routeChangeSuccess", function () {
@@ -589,8 +624,11 @@ angular.module('myApp.controllers', []).
 			$rootScope.appDisplayName = "KRYPTOS AppMaker";
 			var url = "https://kryptos.kryptosmobile.com";
 			$scope.loadApps = function(token) {
-				var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Loading ..!!</h3></div>';
-				$.blockUI({message : message});
+				//var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Loading ..!!</h3></div>';
+				//$.blockUI({message : message});
+                                   $.blockUI({
+                                             message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                             });
 
 				$http.get(url + "/api/mobapp/listMyApps?token=" + token).
 					success(function (dt) {
@@ -658,8 +696,11 @@ angular.module('myApp.controllers', []).
 					    errorCB, 'No Network', 'Ok');
 					return;
 				}
-				var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Authenticating</h3></div>';
-				$.blockUI({message : message});
+				//var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Authenticating</h3></div>';
+				//$.blockUI({message : message});
+                                   $.blockUI({
+                                             message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                             });
 
 				$http.post(url + "/api/authenticate" , {username : username, password : password}).
 					success(function(data) {
@@ -725,8 +766,11 @@ angular.module('myApp.controllers', []).
 					return;
 				}
 
-			var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Loading the App..</h3></div>';
-			$.blockUI({message : message});
+			//var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Loading the App..</h3></div>';
+			//$.blockUI({message : message});
+                               $.blockUI({
+                                         message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                         });
 
 				var baseUrl = MyCampusApp.config.serverUrl;
 				$.jStorage.deleteKey(tenant + '-metadata');
@@ -766,8 +810,11 @@ angular.module('myApp.controllers', []).
 			$rootScope.kappid;
 			var url = "https://kryptos.kryptosmobile.com";
 			$scope.loadApplications = function(token) {
-				var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Loading App..!!</h3></div>';
-				$.blockUI({message : message});
+				//var message = '<div style="margin: 2px; vertical-align: middle; display: inline-block"><i class="icon-cog icon-spin icon-4x"></i><h3 style="color:white;">Loading App..!!</h3></div>';
+				//$.blockUI({message : message});
+                                     $.blockUI({
+                                               message: '<div id="floatingBarsG"><div class="blockG" id="rotateG_01"></div><div class="blockG" id="rotateG_02"></div><div class="blockG" id="rotateG_03"></div><div class="blockG" id="rotateG_04"></div><div class="blockG" id="rotateG_05"></div><div class="blockG" id="rotateG_06"></div><div class="blockG" id="rotateG_07"></div><div class="blockG" id="rotateG_08"></div></div><div></div>'
+                                               });
 
 				$http.get(url + "/api/mobapp/appFeatures?id=" + $rootScope.kappid + "&token=" + token).
 					success(function (d1) {
